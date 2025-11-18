@@ -14,7 +14,7 @@ export default class extends BaseSchema {
         .integer('deck_id') // Clé étrangère
         .unsigned() // La clé ne doit pas être négative
         .references('id') // Référence la colonne `id` de la table `deck`
-        .inTable('deck') // Nom de la table de référence
+        .inTable('decks') // Nom de la table de référence
         .onDelete('CASCADE') // Supprime les teachers si la deck est supprimée
         .onUpdate('CASCADE') // Met à jour la clé étrangère si l'id change
 
