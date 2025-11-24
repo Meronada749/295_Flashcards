@@ -39,7 +39,7 @@ td {
 .user-head a {
   text-decoration: none;
   height: 100%;
-  margin-left: 1vw;
+  /* margin-left: 1vw; */
 }
 
 .user-head {
@@ -125,7 +125,7 @@ label {
 .btn {
   text-align: center;
   color: white;
-  width: 100%;
+  /* width: 100%; */
   border: none;
   cursor: pointer;
   height: 4.5em;
@@ -187,5 +187,22 @@ label {
 .user-head a {
   text-decoration: none;
   height: 100%;
-  margin-left: 1vw;
+  /* margin-left: 1vw; */
+}
+
+.bouton {
+  background-color: #00b4cc; /* Couleur de fond */
+  color: white; /* Couleur du texte */
+  padding: 10px 10px; /* Espacement intérieur */
+  text-align: center; /* Centrer le texte */
+  text-decoration: none; /* Supprimer le soulignement par défaut */
+  font-size: 16px; /* Taille de la police */
+  cursor: pointer; /* Curseur en forme de main */
+  border-radius: 5px; /* Coins arrondis */
+  border: none; /* Aucune bordure */
+}
+
+/* Styles pour l'état au survol */
+.bouton:hover {
+  background-color: #45a049;
 }

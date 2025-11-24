@@ -1,0 +1,55 @@
+@component('components/layout', { title: title })
+
+  <h1>
+    Liste des decks
+  </h1>
+
+  <table>
+
+    <thead>
+      <tr>
+        <th>
+          #
+        </th>
+        <th>
+          Title
+        </th>
+        <th>
+          Actions
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @each(d in deck)
+        <tr>
+
+          <td>
+            {{ d.id }}
+          </td>
+
+          <td>
+            {{ d.name }}
+          </td>
+
+          <td class="containerOptions">
+
+            {{--  <a href="{{ route('deck.show', {id: deck.id}) }}" class="bouton">Modifier</a>  --}}
+            <a href="votre_lien.html" class="bouton">Supprimer</a>
+            <a href="votre_lien.html" class="bouton">Voir la liste des FlashCards</a>
+            <a href="votre_lien.html" class="bouton">Créer une nouvelle FlashCard</a>
+            <a href="votre_lien.html" class="bouton">Jouer</a>
+            <a href="votre_lien.html" class="bouton">Publier</a>
+
+          </td>
+        </tr>
+      @endeach
+    </tbody>
+  </table>
+
+  {{--  <h3>
+    Name : {{ deck.name }} <br />
+    Description : {{ deck.description }}
+  </h3>  --}}
+
+@endcomponent
