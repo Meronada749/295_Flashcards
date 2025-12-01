@@ -16,6 +16,18 @@ export default class extends BaseSeeder {
         published: false,
         userId: 1,
       },
+      {
+        name: 'Capitales de mars',
+        description: 'Learn about various subjects',
+        published: false,
+        userId: 2,
+      },
+      {
+        name: "Vocabulaires d'anglais",
+        description: 'Learn about various',
+        published: false,
+        userId: 2,
+      },
     ])
   }
 }

@@ -19,6 +19,26 @@ export default class extends BaseSeeder {
         response: 'Au',
         deckId: 1,
       },
+      {
+        question: 'What is the largest planet in our solar system?',
+        response: 'Jupiter',
+        deckId: 2,
+      },
+      {
+        question: 'Who wrote "Romeo and Juliet"?',
+        response: 'William Shakespeare',
+        deckId: 2,
+      },
+      {
+        question: 'What does CSS stand for?',
+        response: 'Cascading Style Sheets',
+        deckId: 2,
+      },
+      {
+        question: 'What is the fastest land animal?',
+        response: 'Cheetah',
+        deckId: 2,
+      },
     ])
   }
 }

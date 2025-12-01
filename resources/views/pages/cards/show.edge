@@ -1,7 +1,7 @@
 @component('components/layout', { title: title })
 
   <h1>
-    Liste des decks
+    Liste des cards
   </h1>
 
   <table>
@@ -12,7 +12,10 @@
           #
         </th>
         <th>
-          Title
+          Question
+        </th>
+        <th>
+          Réponse
         </th>
         <th>
           Actions
@@ -21,37 +24,35 @@
     </thead>
 
     <tbody>
-      @each(deck in decks)
+      @each((card, index) in cards)
         <tr>
 
           <td>
-            {{ deck.id }}
+            {{ index + 1 }}
           </td>
 
           <td>
-            {{ deck.name }}
+            {{ card.question }}
+          </td>
+
+          <td>
+            {{ card.response }}
           </td>
 
           <td class="containerOptions">
 
-            <a href="{{ route('deck.edit', { deck_id: deck.id }) }}" class="bouton">Modifier</a>
+            <a href="" class="bouton">Voir</a>
+
+            <a href="" class="bouton">Modifier</a>
 
             <form
               method="POST"
               style="display: inline"
-              action="{{ route('deck.destroy', { deck_id: deck.id }) }}?_method=DELETE"
+              action="{{ route('card.destroy', { deck_id: deck.id, card_id: card.id }) }}?_method=DELETE"
             >
               {{ csrfField() }}
               <button class="bouton" type="submit">Supprimer</button>
             </form>
-
-            <a href="{{ route('cards.show', {deck_id: deck.id}) }}" class="bouton">Voir la liste des FlashCards</a>
-
-            <a href="" class="bouton">Créer une nouvelle FlashCard</a>
-
-            <a href="" class="bouton">Jouer</a>
-
-            <a href="" class="bouton">Publier</a>
 
           </td>
         </tr>
