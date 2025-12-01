@@ -1,0 +1,8 @@
+@component('components/layout', { title: title })
+  <h1>
+    Ajout d'une carte
+  </h1>
+  <form action="{{ route('card.store', {deck_id: deck.id}) }}" method="post">
+    @include('partials/createOrUpdateCard')
+  </form>
+@endcomponent

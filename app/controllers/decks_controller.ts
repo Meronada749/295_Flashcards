@@ -1,8 +1,6 @@
 import Deck from '#models/deck'
 import type { HttpContext } from '@adonisjs/core/http'
-import { dd } from '@adonisjs/core/services/dumper'
-import CardsController from './cards_controller.js'
-import Card from '#models/card'
+// import { dd } from '@adonisjs/core/services/dumper'
 
 export default class DecksController {
   /**
@@ -17,19 +15,24 @@ export default class DecksController {
    * Display form to create a new record
    */
   async create({ view }: HttpContext) {
-    // const cards = await Cards.query().orderBy('name', 'asc') // Récupération des sections triées par le nom
-    // return view.render('pages/decks/create.edge', { cards }) // Appel de la vue
+    const deck = await Deck.all()
+    return view.render('pages/decks/create.edge', { deck })
   }
 
   /**
    * Handle form submission for the create action
    */
-  async store({ request }: HttpContext) {}
+  async store({ request, session, response }: HttpContext) {
+    const { name, description } = request.only(['name', 'description'])
+    await Deck.create({ name, description })
+    session.flash('success', 'Le nouveau deck a été ajouté avec succès !')
+    return response.redirect().toRoute('decks.show')
+  }
 
   /**
    * Show individual record
    */
-  async show({ params, view, auth }: HttpContext) {
+  async show({ view }: HttpContext) {
     // TODO : Lorsque l'authentification sera en place
     // Je pourrai récupérer l'id de l'utilisateur
     // const user_id = auth.user.id
@@ -51,23 +54,20 @@ export default class DecksController {
    */
   async update({ params, request, session, response }: HttpContext) {
     const deck = await Deck.findOrFail(params.deck_id)
-
-    // Récupérer le nouveau nom depuis le formulaire
-    const data = request.only(['name'])
+    const data = request.only(['name', 'description'])
     deck.merge(data)
     await deck.save()
-
     session.flash('success', 'Le deck a été mis à jour avec succès !')
-    return response.redirect().toRoute('deck.show')
+    return response.redirect().toRoute('decks.show')
   }
 
   /**
    * Delete record
    */
   async destroy({ params, session, response }: HttpContext) {
-    const deck = await Deck.findOrFail(params.deck_id) // Sélectionne le deck à supprimer
+    const deck = await Deck.findOrFail(params.deck_id)
     await deck.delete() // Supprime le deck
-    session.flash('success', 'Le deck a été supprimé avec succès !') // Afficher un message à l'utilisateur
-    return response.redirect().toRoute('deck.show') // Redirige l'utilisateur sur la home
+    session.flash('success', 'Le deck a été supprimé avec succès !')
+    return response.redirect().toRoute('decks.show')
   }
 }

@@ -1,7 +1,7 @@
 @component('components/layout', { title: title })
-  <h3>
-    {{ title }}
-  </h3>
+  <h1>
+    Ajout d'un deck
+  </h1>
   <form action="{{ route('deck.store') }}" method="post">
     @include('partials/createOrUpdateForm')
   </form>

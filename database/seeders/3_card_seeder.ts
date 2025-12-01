@@ -6,37 +6,37 @@ export default class extends BaseSeeder {
     await Card.createMany([
       {
         question: 'What is the capital of France?',
-        response: 'Paris',
+        answer: 'Paris',
         deckId: 1,
       },
       {
         question: 'What does HTTP stand for?',
-        response: 'HyperText Transfer Protocol',
+        answer: 'HyperText Transfer Protocol',
         deckId: 1,
       },
       {
         question: 'What is the chemical symbol for gold?',
-        response: 'Au',
+        answer: 'Au',
         deckId: 1,
       },
       {
         question: 'What is the largest planet in our solar system?',
-        response: 'Jupiter',
+        answer: 'Jupiter',
         deckId: 2,
       },
       {
         question: 'Who wrote "Romeo and Juliet"?',
-        response: 'William Shakespeare',
+        answer: 'William Shakespeare',
         deckId: 2,
       },
       {
         question: 'What does CSS stand for?',
-        response: 'Cascading Style Sheets',
+        answer: 'Cascading Style Sheets',
         deckId: 2,
       },
       {
         question: 'What is the fastest land animal?',
-        response: 'Cheetah',
+        answer: 'Cheetah',
         deckId: 2,
       },
     ])

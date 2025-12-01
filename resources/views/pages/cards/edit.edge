@@ -1,0 +1,8 @@
+@component('components/layout', { title: title })
+  <h1>
+    Modifier une carte
+  </h1>
+  <form action="{{ route('card.update', { deck_id: deck.id, card_id: card.id }) }}" method="post">
+    @include('partials/createOrUpdateCard')
+  </form>
+@endcomponent

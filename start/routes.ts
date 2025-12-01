@@ -33,14 +33,27 @@ router.get('/deck/:deck_id/edit', [DecksController, 'edit']).as('deck.edit')
 // Route permettant la modification d'un deck
 router.post('/deck/:deck_id/update', [DecksController, 'update']).as('deck.update')
 
+// Route permettant d'afficher le formulaire permettant l'ajout d'un deck
+router.get('/deck/add', [DecksController, 'create']).as('deck.create')
+
+// Route permettant l'ajout d'un deck
+router.post('/deck/add', [DecksController, 'store']).as('deck.store')
+
 /**
  * ROUTES pour les CARDS
  */
-
-// Route permettant de modifier une carte d'un deck
-router.put('/decks/:deck_id/cards/:card_id/edit', [CardsController, 'edit']).as('card.edit')
 
 // Route permettant de supprimer une carte d'un deck
 router
   .delete('/decks/:deck_id/cards/:card_id/destroy', [CardsController, 'destroy'])
   .as('card.destroy')
+
+// Route permettant d'afficher le formulaire permettant l'ajout d'une carte
+router.get('/decks/:deck_id/card/add', [CardsController, 'create']).as('card.create')
+// Route permettant l'ajout d'une carte
+router.post('/decks/:deck_id/card/add', [CardsController, 'store']).as('card.store')
+
+// Route permettant de modifier une carte d'un deck
+router.get('/decks/:deck_id/card/:card_id/edit', [CardsController, 'edit']).as('card.edit')
+// Route permettant la modification d'une carte
+router.post('/decks/:deck_id/card/:card_id/update', [CardsController, 'update']).as('card.update')

@@ -11,7 +11,7 @@ export default class Card extends BaseModel {
   declare question: String
 
   @column()
-  declare response: String
+  declare answer: String
 
   @column()
   declare deckId: number

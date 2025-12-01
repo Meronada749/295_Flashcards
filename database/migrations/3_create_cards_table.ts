@@ -8,7 +8,7 @@ export default class extends BaseSchema {
       table.increments('id')
 
       table.string('question')
-      table.string('response')
+      table.string('answer')
 
       table
         .integer('deck_id') // Clé étrangère

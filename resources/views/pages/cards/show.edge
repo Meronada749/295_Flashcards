@@ -1,7 +1,7 @@
 @component('components/layout', { title: title })
 
-  <h1>
-    Liste des cards
+  <h1 style="text-align: center;">
+    Liste des flashcards
   </h1>
 
   <table>
@@ -15,7 +15,7 @@
           Question
         </th>
         <th>
-          Réponse
+          Answer
         </th>
         <th>
           Actions
@@ -36,14 +36,17 @@
           </td>
 
           <td>
-            {{ card.response }}
+            {{ card.answer }}
           </td>
 
           <td class="containerOptions">
 
             <a href="" class="bouton">Voir</a>
+            {{--  <a href="{{ route('cards.show', {deck_id: deck.id}) }}" class="bouton">Voir la liste des FlashCards</a>  --}}
 
-            <a href="" class="bouton">Modifier</a>
+            {{--  <a href="" class="bouton">Modifier</a>  --}}
+
+            <a href="{{ route('card.edit', { deck_id: deck.id, card_id: card.id  }) }}" class="bouton">Modifier</a>
 
             <form
               method="POST"
