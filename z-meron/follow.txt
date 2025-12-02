@@ -1,14 +1,22 @@
-node ace make:model card -m (models n migrations)
-node ace make:model deck -m
+node ace make:model deck -m (models n migrations)
 
-node ace make:seeder CardSeeder
 node ace make:seeder DeckSeeder
-node ace make:seeder UserSeeder
-
-node ace make:factory (not needed for now)
-
-node ace make:controller card -r
-node ace make:validator card
 
 node ace make:controller deck -r
+
 node ace make:validator deck
+
+// routes
+index
+show
+destroy
+
+create
+store
+
+edit
+update
+
+node ace make:validator auth
+
+node ace make:controller AuthController

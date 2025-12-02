@@ -1,0 +1,20 @@
+@component('components/layout', { title: deck.name })
+
+  <h1>
+    {{ deck.name }}
+  </h1>
+
+  <div>
+    @each(card in cards)
+      <div class="flashcard">
+        <p>
+          <strong>Question :</strong>{{ card.question }}
+        </p>
+        <p>
+          <strong>Réponse :</strong>{{ card.answer }}
+        </p>
+      </div>
+    @endeach
+  </div>
+
+@endcomponent

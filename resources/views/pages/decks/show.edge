@@ -1,6 +1,6 @@
 @component('components/layout', { title: title })
 
-  <h1>
+  <h1 style="text-align: center;">
     Liste des decks
   </h1>
 
@@ -21,11 +21,11 @@
     </thead>
 
     <tbody>
-      @each(deck in decks)
+      @each((deck, index) in decks)
         <tr>
 
           <td>
-            {{ deck.id }}
+            {{ index + 1 }}
           </td>
 
           <td>
@@ -35,7 +35,6 @@
           <td class="containerOptions">
 
             <a href="{{ route('deck.edit', { deck_id: deck.id }) }}" class="bouton">Modifier</a>
-            <a href="{{ route ('deck.create') }}" class="bouton">Créer un nouveau D</a>
 
             <form
               method="POST"
@@ -50,7 +49,9 @@
 
             <a href="{{ route ('card.create', {deck_id: deck.id}) }}" class="bouton">Créer une nouvelle FlashCard</a>
 
-            <a href="" class="bouton">Jouer</a>
+            <a href="{{ route('deck.play', { deck_id: deck.id }) }}" class="bouton">Jouer</a>
+
+            {{--  <a href="" class="bouton">Jouer</a>  --}}
 
             <a href="" class="bouton">Publier</a>
 

@@ -17,7 +17,7 @@ export default class extends BaseSeeder {
       {
         question: 'What is the chemical symbol for gold?',
         answer: 'Au',
-        deckId: 1,
+        deckId: 2,
       },
       {
         question: 'What is the largest planet in our solar system?',
@@ -27,17 +27,22 @@ export default class extends BaseSeeder {
       {
         question: 'Who wrote "Romeo and Juliet"?',
         answer: 'William Shakespeare',
-        deckId: 2,
+        deckId: 3,
       },
       {
         question: 'What does CSS stand for?',
         answer: 'Cascading Style Sheets',
-        deckId: 2,
+        deckId: 3,
       },
       {
         question: 'What is the fastest land animal?',
         answer: 'Cheetah',
-        deckId: 2,
+        deckId: 4,
+      },
+      {
+        question: 'What is the fastest land animal?',
+        answer: 'Cheetah',
+        deckId: 4,
       },
     ])
   }

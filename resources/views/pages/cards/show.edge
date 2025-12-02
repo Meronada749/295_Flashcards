@@ -1,4 +1,10 @@
 @component('components/layout', { title: title })
+  <nav>
+    {{--  <a href="{{ route('decks.show', {deck_id: deck.id}) }}" class="bouton">Voir la liste de mes Decks</a>  --}}
+    <a href="{{ route('decks.show', {deck_id: deck.id}) }}" class="bouton">Voir la liste de mes Decks</a>
+
+    <a href="{{ route ('deck.create') }}" class="bouton">Créer un nouveau Deck</a>
+  </nav>
 
   <h1 style="text-align: center;">
     Liste des flashcards
@@ -42,9 +48,6 @@
           <td class="containerOptions">
 
             <a href="" class="bouton">Voir</a>
-            {{--  <a href="{{ route('cards.show', {deck_id: deck.id}) }}" class="bouton">Voir la liste des FlashCards</a>  --}}
-
-            {{--  <a href="" class="bouton">Modifier</a>  --}}
 
             <a href="{{ route('card.edit', { deck_id: deck.id, card_id: card.id  }) }}" class="bouton">Modifier</a>
 
