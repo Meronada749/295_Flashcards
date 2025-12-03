@@ -36,8 +36,11 @@ export default class CardsController {
    */
   async show({ params, view }: HttpContext) {
     const cards = await Card.query().where('deck_id', params.deck_id)
+
+   // console.log(cards) // see if you actually get data
+
     const deck = await Deck.findOrFail(params.deck_id)
-    return view.render('pages/cards/show.edge', { deck, cards })
+    return view.render('pages/cards/show.edge', { deck, cards: cards.map((card) => card.toJSON()) })
   }
 
   /**

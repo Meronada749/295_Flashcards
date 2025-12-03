@@ -24,7 +24,7 @@ export default class Deck extends BaseModel {
   declare user: BelongsTo<typeof User>
 
   @hasMany(() => Card)
-  declare books: HasMany<typeof Card>
+  declare cards: HasMany<typeof Card>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
