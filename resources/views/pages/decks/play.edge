@@ -1,249 +1,62 @@
-@component('components/layout', { title: deck.name })
+@component('components/layout', { title: 'Mode jeu' })
 
   <h1>
     {{ deck.name }}
   </h1>
   <p>
-    Mode Aléatoire — Carte <span id="current-index">1</span>/ {{ cards.length }}
+    Carte {{ index + 1 }} / {{ total }}
   </p>
 
-  <div class="progress-bar">
-    <div id="progress" class="progress">
-    </div>
+  <div class="flashcard">
+    <p>
+      <strong>Question :</strong>
+    </p>
+    <p>
+      {{ card.question }}
+    </p>
+
+    <p style="margin-top:20px">
+      <strong>Réponse :</strong>
+    </p>
+    <p>
+      {{ card.answer }}
+    </p>
   </div>
 
-  @if(cards.length === 0)
-    <p>
-      Ce deck est vide. Ajoutez des cartes pour commencer !
-    </p>
-  @else
-    <div id="flashcard-wrapper" class="flashcard-wrapper">
-      <div id="flashcard" class="flashcard">
-        <div class="front">
-          <p>
-            <strong>Question</strong>
-          </p>
-          <p id="question-text">
-          </p>
-        </div>
-        <div class="back">
-          <p>
-            <strong>Réponse</strong>
-          </p>
-          <p id="answer-text">
-          </p>
-        </div>
-      </div>
-    </div>
+  <div class="buttons">
+    @if(index > 0)
+      <a class="btn" href="{{ route('deck.play', { deck_id: deck.id, index: index - 1 }) }}">◀ Précédent</a>
+    @endif
+    
+    @if(index < total - 1)
+      <a class="btn" href="{{ route('deck.play', { deck_id: deck.id, index: index + 1 }) }}">Suivant ▶</a>
+    @endif
+  </div>
 
-    <div class="buttons">
-      <button id="correct-btn" class="btn correct">J’ai eu juste ✅</button>
-      <button id="wrong-btn" class="btn wrong">Je me suis trompé ❌</button>
-      <button id="shuffle-btn" class="btn shuffle">Remélanger 🔄</button>
-    </div>
-  @endif
-  
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      /* background: #e0e7ff; */
-      padding: 2rem;
-    }
-    
-    h1 {
-      margin-bottom: 0.2rem;
-    }
-    
-    p {
-      margin: 0.2rem 0 1rem;
-      color: #555;
-    }
-    
-    .progress-bar {
-      width: 100%;
-      height: 10px;
-      background: #ddd;
-      border-radius: 5px;
-      margin-bottom: 2rem;
-      overflow: hidden;
-    }
-    
-    .progress {
-      height: 100%;
-      background: #4f46e5;
-      width: 0%;
-      transition: width 0.3s ease;
-    }
-    
-    .flashcard-wrapper {
-      perspective: 1200px;
-      width: 400px;
-      height: 220px;
-      margin: 0 auto 2rem;
-    }
-    
     .flashcard {
-      width: 100%;
-      height: 100%;
+      width: 350px;
       background: white;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-      position: relative;
-      cursor: pointer;
-      transform-style: preserve-3d;
-      transition: transform 0.6s;
-      user-select: none;
-    }
-    
-    .flashcard.flipped {
-      transform: rotateY(180deg);
-    }
-    
-    .flashcard .front,
-    .flashcard .back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      padding: 2rem;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      color: #222;
-    }
-    
-    .flashcard .back {
-      transform: rotateY(180deg);
+      padding: 20px;
+      margin: 20px auto;
+      border: 1px solid #ddd;
+      border-radius: 8px;
     }
     
     .buttons {
+      margin-top: 20px;
       display: flex;
       justify-content: center;
-      gap: 1rem;
+      gap: 20px;
     }
     
     .btn {
-      padding: 0.7rem 1.5rem;
-      border: none;
+      padding: 8px 16px;
+      background: #444;
+      color: white;
       border-radius: 6px;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      user-select: none;
-    }
-    
-    .correct {
-      background-color: #22c55e;
-      color: white;
-    }
-    
-    .wrong {
-      background-color: #ef4444;
-      color: white;
-    }
-    
-    .shuffle {
-      background-color: #6366f1;
-      color: white;
-    }
-    
-    .btn:hover {
-      filter: brightness(1.1);
+      text-decoration: none;
     }
   </style>
-
-  <script>
-    // Get cards from backend, safely serialized by @js
-    const cards = @js(cards);
-
-    let currentIndex = 0;
-
-    const flashcard = document.getElementById("flashcard");
-
-    const questionText = document.getElementById("question-text");
-
-    const answerText = document.getElementById("answer-text");
-
-    const currentIndexText = document.getElementById("current-index");
-
-    const progressBar = document.getElementById("progress");
-
-    const correctBtn = document.getElementById("correct-btn");
-
-    const wrongBtn = document.getElementById("wrong-btn");
-
-    const shuffleBtn = document.getElementById("shuffle-btn");
-
-    function updateProgress() {
-      currentIndexText.textContent = currentIndex + 1;
-      const progressPercent = (currentIndex + 1) / cards.length * 100;
-      progressBar.style.width = progressPercent + "%";
-    }
-
-    function showCard(index) {
-      const card = cards[index];
-      questionText.textContent = card.question;
-      answerText.textContent = card.answer;
-      flashcard.classList.remove("flipped");
-      updateProgress();
-    }
-
-    function flipCard() {
-      flashcard.classList.toggle("flipped");
-    }
-
-    function nextCard() {
-      if (currentIndex < cards.length - 1) {
-        currentIndex++;
-        showCard(currentIndex);
-      } else {
-        alert("Vous avez terminé toutes les cartes ! 🎉");
-        // Optionally reset:
-        // currentIndex = 0;
-        // showCard(currentIndex);
-      }
-    }
-
-    function shuffleCards() {
-      // Simple Durstenfeld shuffle
-      for (let i = cards.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [ cards[i], cards[j] ] = [ cards[j], cards[i] ];
-      }
-      currentIndex = 0;
-      showCard(currentIndex);
-    }
-    // Click card or press space to flip
-
-    flashcard.addEventListener("click", flipCard);
-
-    document.addEventListener("keydown", e => {
-      if (e.code === "Space") {
-        e.preventDefault();
-        flipCard();
-      }
-    });
-
-    correctBtn.addEventListener("click", () => {
-      if (flashcard.classList.contains("flipped")) {
-        nextCard();
-      }
-    });
-
-    wrongBtn.addEventListener("click", () => {
-      if (flashcard.classList.contains("flipped")) {
-        nextCard();
-      }
-    });
-
-    shuffleBtn.addEventListener("click", shuffleCards);
-    // Init first card
-
-    if (cards.length > 0) {
-      showCard(currentIndex);
-    }
-  </script>
 
 @endcomponent

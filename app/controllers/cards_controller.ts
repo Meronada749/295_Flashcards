@@ -1,12 +1,13 @@
 import Card from '#models/card'
 import Deck from '#models/deck'
 import type { HttpContext } from '@adonisjs/core/http'
+// import { dd } from '@adonisjs/core/services/dumper'
 
 export default class CardsController {
   /**
    * Display a list of resource
    */
-  async index({ view }) {
+  async index({ view }: HttpContext) {
     const cards = await Card.all()
     return view.render('pages/home.edge', { cards })
   }
@@ -36,11 +37,8 @@ export default class CardsController {
    */
   async show({ params, view }: HttpContext) {
     const cards = await Card.query().where('deck_id', params.deck_id)
-
-   // console.log(cards) // see if you actually get data
-
     const deck = await Deck.findOrFail(params.deck_id)
-    return view.render('pages/cards/show.edge', { deck, cards: cards.map((card) => card.toJSON()) })
+    return view.render('pages/cards/show.edge', { deck, cards })
   }
 
   /**
@@ -75,5 +73,29 @@ export default class CardsController {
     await card.delete()
     session.flash('success', 'Le card a été supprimé avec succès !')
     return response.redirect().toRoute('cards.show', { deck_id: params.deck_id })
+  }
+
+  // NEW: show a single card
+  async showCard({ params, view }: HttpContext) {
+    const card = await Card.query()
+      .where('deck_id', params.deck_id)
+      .andWhere('id', params.card_id)
+      .firstOrFail()
+
+    return view.render('pages/cards/home.edge', { card })
+  }
+  async play({ params, view }: HttpContext) {
+    const deck = await Deck.findOrFail(params.deck_id)
+    const cards = await Card.query().where('deck_id', params.deck_id)
+
+    const index = Number(params.index) || 0
+    const card = cards[index]
+
+    return view.render('pages/decks/play.edge', {
+      card,
+      index,
+      total: cards.length,
+      deck,
+    })
   }
 }

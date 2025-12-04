@@ -1,0 +1,30 @@
+@component('components/layout', { title: title })
+
+  <div class="f">
+    <p>
+      <strong>Question: </strong>
+    </p>
+    <p>
+      {{ card.question }}
+    </p>
+    <p>
+      <strong>Réponse: </strong>
+    </p>
+    <p>
+      {{ card.answer }}
+    </p>
+  </div>
+
+  <style>
+    .f {
+      width: 400px;
+      margin: 50px auto;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      border-radius: 10px;
+      font-size: 18px;
+      text-align: center;
+    }
+  </style>
+@endcomponent

@@ -1,3 +1,7 @@
+npm init adonisjs@latest test -- --db=mysql
+Web Starter Kit
+session
+
 node ace make:model deck -m (models n migrations)
 
 node ace make:seeder DeckSeeder
@@ -5,6 +9,10 @@ node ace make:seeder DeckSeeder
 node ace make:controller deck -r
 
 node ace make:validator deck
+
+node ace make:validator auth
+
+node ace make:controller AuthController
 
 // routes
 index
@@ -17,6 +25,6 @@ store
 edit
 update
 
-node ace make:validator auth
-
-node ace make:controller AuthController
+jouer deck
+publier deck
+gestion des utilisateurs

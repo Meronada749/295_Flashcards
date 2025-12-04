@@ -39,11 +39,15 @@ router.get('/deck/:deck_id/edit', [DecksController, 'edit']).as('deck.edit')
 // Route permettant la modification d'un deck
 router.post('/deck/:deck_id/update', [DecksController, 'update']).as('deck.update')
 
-router.get('/deck/:deck_id/play', [DecksController, 'play']).as('deck.play')
+//router.get('/deck/:deck_id/play', [DecksController, 'play']).as('deck.play')
+router.get('/deck/:deck_id/play/:index', [CardsController, 'play']).as('deck.play')
 
 /**
  * ROUTES pour les CARDS
  */
+
+// Route permettant de voir une carte d'un deck
+router.get('/deck/:deck_id/cards/:card_id/show', [CardsController, 'showCard']).as('card.show')
 
 // Route permettant de supprimer une carte d'un deck
 router
