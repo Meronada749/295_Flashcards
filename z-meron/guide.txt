@@ -1,0 +1,678 @@
+npm init adonisjs@latest Flashcards -- --db=mysql
+Web Starter Kit
+session
+
+npx create-vue passion-lecture
+npm install
+
+in resources 
+create components (layout) and 
+partials folders (footer, header, flash)
+
+create in mysql db_flashcards
+node ace migration:run
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+node ace make:model card -m
+
+node ace make:controller teacher -r
+
+node ace make:seeder TeacherSeeder
+
+node ace make:factory teacher
+
+node ace make:validator teacher
+
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+Step 7:- supprimer un enseignant
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+1. créer une route
+2. ajouter une méthode au controller
+
+Par contre, nous n'aurons pas besoin d'une nouvelle vue, car nous allons rediriger l'utilisateur vers la home.
+Pour voir utiliser la méthode delete, il faut donc activer allowMethodSpoofing dans le fichier config/app.ts.
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Dans routes.ts
+
+router.delete('/teacher/:id/destroy', [TeachersController,'destroy']).as('teacher.destroy') // Route permettant de supprimer un enseignant
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Dans teachers_controller.ts
+
+/**
+* Supprimer un enseignant
+*/
+
+async destroy({ params, session, response }: HttpContext) {
+
+    const teacher = await Teacher.findOrFail(params.id) // Sélectionne l'enseignant à supprimer
+    await teacher.delete() // Supprime l'enseignant
+    session.flash('success', "L'enseignant a été supprimé avec succès !") // Afficher un message à l'utilisateur
+    return response.redirect().toRoute('home') // Redirige l'utilisateur sur la home
+
+}
+
+----------------------------------------------------------------------------------------------------------------------------------------
+Modifier la homepage et la page des détails
+Dans la vue homepage, nous devons mettre à jour le code pour supprimer un enseignant.
+
+<form action="{{ route('teacher.destroy', { id: teacher.id }) }}?_method=DELETE" method="POST" style="display: inline">
+
+{{ csrfField() }}
+
+<button type="submit" style="background: none; border: none; padding: 0; cursor: pointer;">
+<img height="20em" src="/img/delete.png" alt="delete" />
+</button>
+
+</form>
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+Step 8:- ajouter un enseignant
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+1. créer deux routes :
+    une route pour afficher le formulaire permettant de renseigner les informations de l'enseignant
+    une route pour gérer l'ajout de l'enseignant
+2. ajouter un validateur
+3. ajouter deux méthodes au contrôleur
+4. ajouter une vue and 4 components
+5. <a href="{{ route ('teacher.create') }}">Ajouter un enseignant</a> in header.edge
+
+----------------------------------------------------------------------------------------------------------------------------------------
+router.get('/teacher/add', [TeachersController, 'create']).as('teacher.create') // Route permettant d'afficher le formulaire permettant l'ajout d'un enseignant
+
+router.post('/teacher/add', [TeachersController, 'store']).as('teacher.store') // Route permettant l'ajout de l'enseignant
+----------------------------------------------------------------------------------------------------------------------------------------
+node ace make:validator TeacherValidator
+
+import vine from '@vinejs/vine'
+const teacherValidator = vine.compile(
+vine.object({
+    gender: vine.string().minLength(1).maxLength(1),
+    firstname: vine.string().minLength(2),
+    lastname: vine.string().minLength(2),
+    nickname: vine.string().minLength(2),
+    origine: vine.string().minLength(2),
+    sectionId: vine.number(),
+    })
+)
+export { teacherValidator }
+----------------------------------------------------------------------------------------------------------------------------------------
+/**
+* Afficher le formulaire pour créer un nouvel enseignant
+*/
+
+async create({ view }: HttpContext) {
+
+    const sections = await Section.query().orderBy('name', 'asc') // Récupération des sections triées par le nom
+    return view.render('pages/teachers/create', { title: "Ajout d'un enseignant", sections }) // Appel de la vue
+
+}
+
+/**
+* Gérer la soumission du formulaire pour la création d'un enseignant
+*/
+
+async store({ request, session, response }: HttpContext) {
+
+    const { gender, firstname, lastname, nickname, origine, sectionId } = await request.validateUsing(teacherValidator) // Validation des données saisies par l'utilisateur
+    await Teacher.create({ gender, firstname, lastname, nickname, origine, sectionId }) // Création du nouvel enseignant
+    session.flash('success', 'Le nouvel enseignant a été ajouté avec succès !') // Afficher un message à l'utilisateur
+    return response.redirect().toRoute('home') // Rediriger vers la homepage
+
+}
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Ajout de la vue create.edge:
+@component('components/layout', { title: title })
+<h3>
+{{ title }}
+</h3>
+<form action="{{ route('teacher.store') }}" method="post">
+{{ csrfField() }}
+<div class="radio">
+@!component('components/radio', {
+name: 'gender',
+value: old('gender'),
+options: [
+{ value: 'M', label: 'Homme' },
+{ value: 'W', label: 'Femme' },
+{ value: 'O', label: 'Autre' }
+]
+})
+</div>
+<div class="field">
+@!component('components/input', { name: 'firstname', label: 'Prénom', value:
+old('firstname') })
+</div>
+<div class="field">
+@!component('components/input', { name: 'lastname', label: 'Nom', value:
+old('lastname') })
+</div>
+<div class="field">
+@!component('components/input', { name: 'nickname', label: 'Surnom', value:
+old('nickname') })
+</div>
+<div class="field">
+@!component('components/textarea', { name: 'origine', label: 'Origine',
+value: old('origine') })
+</div>
+<div class="field">
+@!component('components/select', {
+name: 'sectionId',
+label: 'Section',
+sections: sections,
+value: old('section'),
+placeholder: 'Choisissez une section'
+})
+</div>
+<button type="submit">Enregistrer</button>
+</form>
+@endcomponent
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Le composant radio :
+@each((option, index) in options)
+<input
+type="radio"
+id="{{ name }}{{ index }}"
+name="{{ name }}"
+value="{{ option.value }}"
+{{ option.value === (value || old(name)) ? 'checked' : '' }}
+/>
+<label for="{{ name }}{{ index }}">{{ option.label }}</label>
+@end
+@if(flashMessages.get('errors.' + name))
+<p class="text-danger">
+{{ flashMessages.get('errors.' + name)[0] }}
+</p>
+@endif
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Le composant input :
+<label for="{{ name }}">{{ label }}</label>
+<input
+type="{{ type || text }}"
+name="{{ name }}"
+id="{{ name }}"
+value="{{ value || '' }}"
+placeholder="{{ label }}"
+/>
+@inputError(name)
+@each(message in $messages)
+<p class="text-danger">
+{{ message }}
+</p>
+@end
+@end
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Le composant textarea :
+<label for="{{ name }}">{{ label }} </label>
+
+<textarea name="{{ name }}" id="{{ name }}" placeholder="{{ label }}">{{ value || '' }}</textarea>
+
+@inputError(name)
+  @each(message in $messages)
+    <p class="text-danger">
+      {{ message }}
+    </p>
+  @end
+@end
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Le composant select :
+<label for="{{ name }}">{{ label }}</label>
+<select name="{{ name }}" id="{{ name }}" class="{{ cls || 'form-control' }}">
+<option value="">
+{{ placeholder || 'Sélectionnez une option' }}
+</option>
+@each(section in sections)
+<option value="{{ section.id }}" {{ section.id == (value || old(name)) ?
+'selected' : '' }}>
+{{ section.name }}
+</option>
+@end
+</select>
+@if(flashMessages.get('errors.sectionId'))
+<p class="text-danger">
+{{ flashMessages.get('errors.sectionId') }}
+</p>
+@endif
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+Step 9:- modifier un enseignant
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+1. créer deux routes :
+    une route pour afficher le formulaire permettant de renseigner les informations de l'enseignant
+    une route pour gérer l'ajout de l'enseignant
+2. ajouter deux méthodes au contrôleur
+3. ajouter une vue
+4. modify home.edge and show.edge
+
+----------------------------------------------------------------------------------------------------------------------------------------
+// Route permettant d'afficher le formulaire permettant la mise à jour d'un enseignant
+router.get('/teacher/:id/edit', [TeachersController, 'edit']).as('teacher.edit')
+
+// Route permettant la modification de l'enseignant
+router.post('/teacher/:id/update', [TeachersController, 'update']).as('teacher.update')
+----------------------------------------------------------------------------------------------------------------------------------------
+/**
+* Afficher le formulaire permettant la mise à jour d'un enseignant
+*/
+
+async edit({ params, view }: HttpContext) {
+
+const teacher = await Teacher.findOrFail(params.id)
+
+const sections = await Section.query().orderBy('name', 'asc')
+
+// Afficher la vue
+return view.render('pages/teachers/edit.edge', {
+  title: 'Modifier un enseignant',
+  teacher,
+  sections,
+  })
+}
+
+/**
+* Gérer la soumission du formulaire pour la mise à jour d'un enseignant
+*/
+
+async update({ params, request, session, response }: HttpContext) {
+
+const { gender, firstname, lastname, nickname, origine, sectionId } = await request.validateUsing(teacherValidator)
+
+const teacher = await Teacher.findOrFail(params.id)
+
+// Si un enseignant correspond à l'id
+if (teacher) {
+await teacher.merge({ gender, firstname, lastname, nickname, origine, sectionId }).save()
+}
+session.flash('success', "L'enseignant a été mis à jour avec succès !")
+
+return response.redirect().toRoute('home')
+}
+----------------------------------------------------------------------------------------------------------------------------------------
+Ajout de la vue edit.edge:
+@component('components/layout', { title: title })
+<h3>
+{{ title }}
+</h3>
+<form action="{{ route('teacher.update', {id: teacher.id}) }}" method="post">
+{{ csrfField() }}
+<div class="radio">
+@!component('components/radio', {
+name: 'gender',
+value: old('gender') || (teacher ? teacher.gender : ''),
+options: [
+{ value: 'M', label: 'Homme' },
+{ value: 'W', label: 'Femme' },
+{ value: 'O', label: 'Autre' }
+]
+})
+</div>
+<div class="field">
+@!component('components/input', { name: 'firstname', label: 'Prénom', value:
+old('firstname') || (teacher ? teacher.firstname : '') })
+</div>
+<div class="field">
+@!component('components/input', { name: 'lastname', label: 'Nom', value:
+old('lastname') || (teacher ? teacher.lastname : '') })
+</div>
+<div class="field">
+@!component('components/input', { name: 'nickname', label: 'Surnom', value:
+old('nickname') || ( teacher ? teacher.nickname : '') })
+</div>
+<div class="field">
+@!component('components/textarea', { name: 'origine', label: 'Origine',
+value: old('origine') || ( teacher ? teacher.origine : '') })
+</div>
+<div class="field">
+@!component('components/select', {
+name: 'sectionId',
+label: 'Section',
+sections: sections,
+value: old('section') || (teacher ? teacher.sectionId : ''),
+placeholder: 'Choisissez une section'
+})
+</div>
+<button type="submit">Enregistrer</button>
+</form>
+@endcomponent
+----------------------------------------------------------------------------------------------------------------------------------------
+<a href="{{ route('teacher.edit', {id: teacher.id}) }}">
+<img height="20em" src="/img/edit.png" alt="edit" />
+</a>
+----------------------------------------------------------------------------------------------------------------------------------------
+mix create.edge and edit.edge
+
+créer un fichier views/partials/createOrUpdateForm.edge :
+
+{{ csrfField() }}
+<div class="radio">
+  @!component('components/radio', {
+  name: 'gender',
+  value: old('gender') || (teacher ? teacher.gender : ''),
+  options: [
+  { value: 'M', label: 'Homme' },
+  { value: 'W', label: 'Femme' },
+  { value: 'O', label: 'Autre' }
+  ]
+  })
+</div>
+
+<div class="field">
+  @!component('components/input', { name: 'firstname', label: 'Prénom', value: old('firstname') || (teacher ? teacher.firstname : '') })
+</div>
+
+<div class="field">
+  @!component('components/input', { name: 'lastname', label: 'Nom', value: old('lastname') || (teacher ? teacher.lastname : '') })
+</div>
+
+<div class="field">
+  @!component('components/input', { name: 'nickname', label: 'Surnom', value: old('nickname') || ( teacher ? teacher.nickname : '') })
+</div>
+
+<div class="field">
+  @!component('components/textarea', { name: 'origine', label: 'Origine', value: old('origine') || ( teacher ? teacher.origine : '') })
+</div>
+
+<div class="field">
+  @!component('components/select', {
+    name: 'sectionId',
+    label: 'Section',
+    sections: sections,
+    value: old('section') || (teacher ? teacher.sectionId : ''),
+    placeholder: 'Choisissez une section'
+  })
+</div>
+<button type="submit">Enregistrer</button>
+----------------------------------------------------------------------------------------------------------------------------------------
+  <form action="{{ route('teacher.store') }}" method="post">
+    @include('partials/createOrUpdateForm')
+  </form>
+----------------------------------------------------------------------------------------------------------------------------------------
+  <form action="{{ route('teacher.update', {id: teacher.id}) }}" method="post">
+    @include('partials/createOrUpdateForm')
+  </form>
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+Step 10:- Authentification
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+1. migration of user table
+2. Nous allons créer 2 utilisateurs, un avec les droits admin et l'autre sans.
+----------------------------------------------------------------------------------------------------------------------------------------
+import { BaseSchema } from '@adonisjs/lucid/schema'
+
+export default class extends BaseSchema {
+  protected tableName = 'users'
+
+  async up() {
+    this.schema.createTable(this.tableName, (table) => {
+      table.increments('id').notNullable()
+      table.string('username').notNullable().unique()
+      table.string('password').notNullable()
+      table.boolean('is_admin').notNullable().defaultTo(false)
+      table.timestamp('created_at').notNullable()
+      table.timestamp('updated_at').nullable()
+    })
+  }
+
+  async down() {
+    this.schema.dropTable(this.tableName)
+  }
+}
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+node ace make:seeder user_seeder
+
+fix migrations
+fix models
+
+node ace migration:fresh --seed
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+Step 11:- Login
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+1. route
+2. controller et d'une méthode dans ce contrôleur
+3. validator
+----------------------------------------------------------------------------------------------------------------------------------------
+// Route permettant de se connecter
+router.post('/login', [AuthController, 'handleLogin']).as('auth.handleLogin')
+----------------------------------------------------------------------------------------------------------------------------------------
+node ace make:validator auth
+
+import vine from '@vinejs/vine'
+const loginUserValidator = vine.compile(
+vine.object({
+username: vine.string(),
+password: vine.string().minLength(4),
+})
+)
+export { loginUserValidator }
+----------------------------------------------------------------------------------------------------------------------------------------
+node ace make:controller AuthController
+
+import type { HttpContext } from '@adonisjs/core/http'
+import { loginUserValidator } from '#validators/auth'
+import User from '#models/user'
+
+/**
+* Controller pour l'authentification
+*/
+
+export default class AuthController {
+
+/**
+* Gérer la connexion d'un utilisateur
+*/
+
+async handleLogin({ request, auth, session, response }: HttpContext) {
+// Récupère les données validées
+const { username, password } = await request.validateUsing(loginUserValidator)
+// Récupère l'utilisateur correspondant aux données saisies par l'utilisateur
+const user = await User.verifyCredentials(username, password)
+// Utilise le guard 'web' pour connecter l'utilisateur -> Voir le fichier
+config/auth.ts
+await auth.use('web').login(user)
+// Affiche un msg à l'utilsateur
+session.flash('success', "L'utilisateur s'est connecté avec succès")
+// Redirige vers la route ayant pour nom 'home'
+return response.redirect().toRoute('home')
+}
+}
+----------------------------------------------------------------------------------------------------------------------------------------
+header.edge
+
+@eval(await auth.check())
+<header>
+<div class="container-header">
+<div class="titre-header">
+<h1>
+Surnom des enseignants
+</h1>
+</div>
+<div class="login-container">
+@if(auth.isAuthenticated)
+{{ auth.user.username }} ({{ auth.user.isAdmin ? 'admin' : 'user' }})
+<form action="#" method="post">
+{{ csrfField() }}
+<button type="submit" class="btn btn-logout">Se déconnecter</button>
+</form>
+@else
+<form action="{{ route('auth.handleLogin') }}" method="post">
+{{ csrfField() }}
+@!component('components/input', { name: 'username', label: "Nom
+d'utilisateur"})
+@!component('components/input', { name: 'password', label: 'Mot de
+passe', type: 'password'})
+<button type="submit" class="btn btn-login">Se connecter</button>
+</form>
+@endif
+</div>
+</div>
+<nav>
+<a href="{{ route('home') }}">Accueil</a>&nbsp;
+<a href="{{ route('teacher.create') }}">Ajouter un enseignant</a>
+</nav>
+</header>
+----------------------------------------------------------------------------------------------------------------------------------------
+views/partials/flash.edge
+
+@error('E_INVALID_CREDENTIALS')
+<div class="alert alert-danger">
+{{ $message }}
+</div>
+@end
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+Step 12:- Logout
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+1. route
+2. méthode dans AuthController
+----------------------------------------------------------------------------------------------------------------------------------------
+// Route permettant de se déconnecter
+router.post('/logout', [AuthController, 'handleLogout']).as('auth.handleLogout')
+----------------------------------------------------------------------------------------------------------------------------------------
+/**
+* Gérer la déconnexion d'un utilisateur
+*/
+
+async handleLogout({ auth, session, response }: HttpContext) {
+// Utilise le Guard 'web' pour déconnecter l'utilisateur -> Voir le fichier
+config/auth.ts
+await auth.use('web').logout()
+// Affiche un message à l'utilisateur
+session.flash('success', "L'utilisateur s'est déconnecté avec succès")
+// Redirige la réponse sur la route 'home'
+return response.redirect().toRoute('home')
+}
+----------------------------------------------------------------------------------------------------------------------------------------
+header.edge
+
+...
+@if(auth.isAuthenticated)
+{{ auth.user.username }} ({{ auth.user.isAdmin ? 'admin' : 'user' }})
+<form action="{{ route('auth.handleLogout') }}" method="post">
+{{ csrfField() }}
+<button type="submit" class="btn btn-logout">Se déconnecter</button>
+</form>
+@else
+...
+----------------------------------------------------------------------------------------------------------------------------------------
+Option Quand l’utiliser
+Server Pour des middlewares globaux applicables à toutes les requêtes.
+Router Pour des middlewares applicables uniquement aux requêtes qui correspondent à des routes.
+Named Pour des middlewares spécifiques appliqués manuellement à certaines routes ou groupes.
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+Step 13:- Gestion des rôles
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+.use(middleware.auth()) for routes
+.use(middleware.guest()) for routes
+
+----------------------------------------------------------------------------------------------------------------------------------------
+auth_middleware.ts, la variable redirectTo est définie avec la valeur '/login' et changer en '/'
+----------------------------------------------------------------------------------------------------------------------------------------
+
+node ace make:middleware ShareAuthState choose router
+
+----------------------------------------------------------------------------------------------------------------------------------------
+in ShareAuthStateMiddleware.ts
+
+import type { HttpContext } from '@adonisjs/core/http'
+import type { NextFn } from '@adonisjs/core/types/http'
+export default class ShareAuthStateMiddleware {
+public async handle(ctx: HttpContext, next: NextFn) {
+/**
+* Middleware logic goes here (before the next call)
+*/
+const { auth, view } = ctx // Extraction de auth et view depuis le contexte
+try {
+// Vérifie si l'utilisateur est authentifié
+const isAuthenticated = await auth.check()
+// Partage la variable dans les vues
+view.share({ isAuthenticated })
+} catch (error) {
+// Gestion d'erreurs éventuelles
+console.log(error)
+view.share({ isAuthenticated: false })
+}
+// Passe au middleware suivant ou à la logique de la route
+await next()
+}
+}
+
+home.edge and header.edge
+@if(isAuthenticated)
+@endif
+----------------------------------------------------------------------------------------------------------------------------------------
+
+node ace make:middleware EnsureAdmin choose named
+
+----------------------------------------------------------------------------------------------------------------------------------------
+in EnsureAdminMiddleware.ts
+import type { HttpContext } from '@adonisjs/core/http'
+import type { NextFn } from '@adonisjs/core/types/http'
+
+export default class EnsureAdminMiddleware {
+  async handle(ctx: HttpContext, next: NextFn) {
+    const { auth, session, response } = ctx
+    try {
+      // Vérifie si l'utilisateur est connecté
+      const isAuthenticated = await auth.check()
+      if (!isAuthenticated || !auth.user?.isAdmin) {
+        // Affiche un message d'erreur à l'utilisateur
+        session.flash('error', 'Vous devez avoir les droits admin pour accéder à cette page')
+        // Redirige l'utilisateur vers la page d'accueil
+        return response.redirect().toRoute('home')
+      }
+      // Passe au middleware suivant ou à la logique de la route
+      await next()
+    } catch (error) {
+      console.error('Erreur dans EnsureAdminMiddleware :', error)
+      // Redirige vers la page d'accueil en cas d'erreur
+      session.flash('error', 'Une erreur est survenue')
+      return response.redirect().toRoute('home')
+    }
+  }
+}
+----------------------------------------------------------------------------------------------------------------------------------------
+.use(middleware.ensureAdmin())
+----------------------------------------------------------------------------------------------------------------------------------------
+La dernière chose qu'il nous reste à faire, 
+est de nous assurer que seul un admin peut accéder aux actions
+edit et destroy depuis la vue show.
+
+in show.edge
+
+@if(auth.user.isAdmin)
+<div class="actions">
+<a href="{{ route('teacher.edit', {id: teacher.id}) }}">
+<img height="20em" src="/img/edit.png" alt="edit" />
+</a>
+<a
+onClick="return confirm(`Voulez-vous vraiment supprimer l'enseignant {{
+teacher.lastname }} {{ teacher.firstname }} ?`)"
+href="{{ route('teacher.destroy', {id: teacher.id}) }}"
+>
+<img height="20em" src="/img/delete.png" alt="delete" />
+</a>
+</div>
+@endif
+----------------------------------------------------------------------------------------------------------------------------------------

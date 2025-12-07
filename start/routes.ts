@@ -46,7 +46,7 @@ router
   .use(middleware.auth())
 
 //router.get('/deck/:deck_id/play', [DecksController, 'play']).as('deck.play')
-router.get('/deck/:deck_id/play', [CardsController, 'play']).as('deck.play').use(middleware.auth())
+router.get('/deck/:deck_id/play', [DecksController, 'play']).as('deck.play').use(middleware.auth())
 
 /**
  * ROUTES pour les CARDS
@@ -54,7 +54,7 @@ router.get('/deck/:deck_id/play', [CardsController, 'play']).as('deck.play').use
 
 // Route permettant de voir une carte d'un deck
 router
-  .get('/deck/:deck_id/cards/:card_id/show', [CardsController, 'showCard'])
+  .get('/deck/:deck_id/cards/:card_id/showCard', [CardsController, 'showCard'])
   .as('card.show')
   .use(middleware.auth())
 

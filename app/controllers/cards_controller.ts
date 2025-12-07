@@ -75,27 +75,14 @@ export default class CardsController {
     return response.redirect().toRoute('cards.show', { deck_id: params.deck_id })
   }
 
-  // NEW: show a single card
+  // show a single card
   async showCard({ params, view }: HttpContext) {
-    const card = await Card.query()
-      .where('deck_id', params.deck_id)
-      .andWhere('id', params.card_id)
-      .firstOrFail()
-
-    return view.render('pages/cards/home.edge', { card })
-  }
-  async play({ params, view }: HttpContext) {
+    // Fetch the deck first
     const deck = await Deck.findOrFail(params.deck_id)
-    const cards = await Card.query().where('deck_id', params.deck_id)
 
-    const index = Number(params.index) || 0
-    const card = cards[index]
+    // Fetch the card within that deck
+    const card = await Card.query().where({ deck_id: deck.id, id: params.card_id }).firstOrFail()
 
-    return view.render('pages/decks/play.edge', {
-      card,
-      index,
-      total: cards.length,
-      deck,
-    })
+    return view.render('pages/cards/home.edge', { deck, card })
   }
 }

@@ -34,10 +34,6 @@ export default class DecksController {
    * Show individual record
    */
   async show({ view, auth }: HttpContext) {
-    // TODO : Lorsque l'authentification sera en place
-    // Je pourrai récupérer l'id de l'utilisateur
-    // const user_id = auth.user.id, const user_id = 2, const user = auth.user!
-
     const user = auth.user!
     const decks = await Deck.query().where('user_id', user.id)
     return view.render('pages/decks/show.edge', { decks })
@@ -75,7 +71,9 @@ export default class DecksController {
 
   async play({ params, view }: HttpContext) {
     const deck = await Deck.findOrFail(params.deck_id)
+
     const cards = await Card.query().where('deck_id', params.deck_id)
+
     return view.render('pages/decks/play.edge', { deck, cards })
   }
 }

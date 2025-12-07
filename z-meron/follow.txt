@@ -2,6 +2,9 @@ npm init adonisjs@latest test -- --db=mysql
 Web Starter Kit
 session
 
+npx create-vue passion-lecture
+npm install
+
 node ace make:model deck -m (models n migrations)
 
 node ace make:seeder DeckSeeder
@@ -25,6 +28,7 @@ store
 edit
 update
 
-jouer deck
-publier deck
-gestion des utilisateurs
+3. publier deck
+4. gestion des utilisateurs: done
+2. inscription
+1. validation
