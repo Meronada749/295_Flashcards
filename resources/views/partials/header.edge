@@ -4,7 +4,7 @@
 
     <div class="titre-header">
       <h1 style="display: inline;">
-        Flashcards
+        <a href="{{ route('home') }}" style="text-decoration: none;">Flashcards</a>
       </h1>
     </div>
 
@@ -30,7 +30,7 @@
   {{--  <nav>
     <a href="{{ route('home') }}">Accueil</a>&nbsp;
     @if(isAuthenticated)
-      <a href="{{ route('deckS.create') }}">Ajouter un enseignant</a>
+      <a href="{{ route('decks.create') }}">Ajouter un enseignant</a>
     @endif
   </nav>  --}}
 </header>

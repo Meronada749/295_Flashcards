@@ -23,12 +23,10 @@ show
 destroy
 
 create
-store
+store (validator)
 
 edit
-update
+update (validator)
 
-3. publier deck
-4. gestion des utilisateurs: done
+3. gestion des utilisateurs: done
 2. inscription
-1. validation

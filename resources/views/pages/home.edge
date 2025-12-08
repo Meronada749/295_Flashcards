@@ -4,4 +4,46 @@
     Welcome to the home of Flash Card. Please log in to start playing.
   </nav>
 
+  @if(isAuthenticated)
+
+    <div class="containers">
+
+      @each(deck in publishedDecks)
+        <div class="inner-div">
+
+          <h3>
+            {{ deck.name }}
+          </h3>
+
+          <p>
+            {{ deck.description }}
+          </p>
+
+          <a href="{{ route('deck.play', { deck_id: deck.id }) }}" class="bouton">▶ Jouer</a>
+
+        </div>
+      @endeach
+      
+    </div>
+
+    <style>
+      .containers {
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      
+      .inner-div {
+        background-color: whitesmoke;
+        color: black;
+        padding: 20px;
+        flex: 0 0 200px;
+        min-width: 150px;
+        max-width: 300px;
+        border-radius: 15px;
+        border: 1px solid #ccc;
+      }
+    </style>
+  @endif
 @endcomponent

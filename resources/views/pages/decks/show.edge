@@ -51,9 +51,10 @@
 
             <a href="{{ route('deck.play', { deck_id: deck.id }) }}" class="bouton">Jouer</a>
 
-            {{--  <a href="" class="bouton">Jouer</a>  --}}
-
-            <a href="" class="bouton">Publier</a>
+            <form method="POST" style="display: inline" action="{{ route('deck.publish', { deck_id: deck.id }) }}">
+              {{ csrfField() }}
+              <button class="bouton" type="submit">Publier</button>
+            </form>
 
           </td>
         </tr>

@@ -9,7 +9,7 @@ export default class extends BaseSchema {
 
       table.string('name')
       table.string('description')
-      table.boolean('published').defaultTo(false)
+      table.boolean('published').defaultTo(false) // Mettre à false par défaut
 
       table
         .integer('user_id') // Clé étrangère

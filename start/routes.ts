@@ -45,8 +45,14 @@ router
   .as('deck.update')
   .use(middleware.auth())
 
-//router.get('/deck/:deck_id/play', [DecksController, 'play']).as('deck.play')
+// Route permettant de jouer un deck
 router.get('/deck/:deck_id/play', [DecksController, 'play']).as('deck.play').use(middleware.auth())
+
+// Route permettant de publish un deck
+router
+  .post('/deck/:deck_id/publish', [DecksController, 'publish'])
+  .as('deck.publish')
+  .use(middleware.auth())
 
 /**
  * ROUTES pour les CARDS
