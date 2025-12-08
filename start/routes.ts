@@ -31,6 +31,7 @@ router
   .delete('/deck/:deck_id/destroy', [DecksController, 'destroy'])
   .as('deck.destroy')
   .use(middleware.auth())
+  .use(middleware.ensureAdmin())
 
 // Route permettant d'afficher le formulaire permettant l'ajout d'un deck
 router.get('/deck/add', [DecksController, 'create']).as('deck.create').use(middleware.auth())
@@ -92,10 +93,25 @@ router
   .as('card.update')
   .use(middleware.auth())
 
+/**
+ * ROUTES pour login et logout
+ */
+
 // Route permettant de se connecter
-router.post('/login', [AuthController, 'handleLogin']).as('auth.handleLogin')
+router
+  .post('/login', [AuthController, 'handleLogin'])
+  .as('auth.handleLogin')
+  .use(middleware.guest())
+
 // Route permettant de se déconnecter
 router
   .post('/logout', [AuthController, 'handleLogout'])
   .as('auth.handleLogout')
   .use(middleware.auth())
+
+router.get('/signup', [AuthController, 'showSignupForm']).as('auth.signup').use(middleware.guest())
+
+router
+  .post('/signup', [AuthController, 'handleSignup'])
+  .as('auth.handleSignup')
+  .use(middleware.guest())

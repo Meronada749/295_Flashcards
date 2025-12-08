@@ -9,28 +9,37 @@
     </div>
 
     <div class="login-container">
+      <a
+        href="{{ route('auth.signup') }}"
+        class="bouton"
+        style="margin-right: 10px; background-color: gold"
+      >S'enregistrer</a>
+
       @if(auth.isAuthenticated)
+
         {{ auth.user.username }} ({{ auth.user.isAdmin ? 'admin' : 'user' }})
         <form action="{{ route('auth.handleLogout') }}" method="post">
           {{ csrfField() }}
           <button type="submit" class="btn btn-logout">Se déconnecter</button>
         </form>
+
       @else
+      
         <form action="{{ route('auth.handleLogin') }}" method="post">
           {{ csrfField() }}
           @!component('components/input', { name: 'username', label: "Nom d'utilisateur"})
           @!component('components/input', { name: 'password', label: 'Mot de passe', type: 'password'})
           <button type="submit" class="btn btn-login">Se connecter</button>
         </form>
+
       @endif
     </div>
 
   </div>
 
   {{--  <nav>
-    <a href="{{ route('home') }}">Accueil</a>&nbsp;
-    @if(isAuthenticated)
-      <a href="{{ route('decks.create') }}">Ajouter un enseignant</a>
+    @if(auth.isAuthenticated)
+      <a href="{{ route('deck.create') }}">Ajouter un enseignant</a>
     @endif
   </nav>  --}}
 </header>

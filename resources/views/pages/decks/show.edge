@@ -1,4 +1,9 @@
 @component('components/layout', { title: title })
+  <nav>
+    <a href="" class="bouton">Voir la liste de mes Decks</a>
+
+    <a href="{{ route ('deck.create') }}" class="bouton">Créer un nouveau Deck</a>
+  </nav>
 
   <h1 style="text-align: center;">
     Liste des decks

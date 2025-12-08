@@ -42,4 +42,18 @@ export default class AuthController {
     // Redirige la réponse sur la route 'home'
     return response.redirect().toRoute('home')
   }
+
+  async showSignupForm({ view }: HttpContext) {
+    return view.render('pages/users/signUp.edge')
+  }
+
+  async handleSignup({ request, session, response }: HttpContext) {
+    const { username, password } = await request.validateUsing(loginUserValidator)
+
+    await User.create({ username, password })
+
+    session.flash('success', "L'utilisateur is created avec succès")
+
+    return response.redirect().toRoute('home')
+  }
 }

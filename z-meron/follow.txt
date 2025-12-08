@@ -28,5 +28,5 @@ store (validator)
 edit
 update (validator)
 
-3. gestion des utilisateurs: done
-2. inscription
+1. Un admin peut tout faire sur l’application c’est-à-dire gérer n’importe quel deck. test with 2 users
+2. A noter que les messages de validation sont en Français. 

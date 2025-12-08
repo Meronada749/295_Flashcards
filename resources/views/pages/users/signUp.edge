@@ -1,0 +1,8 @@
+@component('components/layout', { title: title })
+  <h1>
+    Inscription
+  </h1>
+  <form action="{{ route('auth.handleSignup') }}" method="post">
+    @include('partials/createUser')
+  </form>
+@endcomponent

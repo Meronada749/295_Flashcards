@@ -7,11 +7,10 @@ export default class DecksController {
   /**
    * Display a list of resource
    */
-  async index({ view, auth }: HttpContext) {
+  async index({ view }: HttpContext) {
     const publishedDecks = await Deck.query().where('published', 1)
-    // Pass authentication status to the view
-    const isAuthenticated = auth.user !== null
-    return view.render('pages/home.edge', { publishedDecks, isAuthenticated })
+
+    return view.render('pages/home.edge', { publishedDecks })
   }
 
   /**
@@ -28,7 +27,7 @@ export default class DecksController {
   async store({ request, session, response, auth }: HttpContext) {
     const { name, description } = await request.validateUsing(deckValidator)
 
-    await Deck.create({ name, description, userId: auth.user.id })
+    await Deck.create({ name, description, userId: auth.user!.id })
 
     session.flash('success', 'Le nouveau deck a été ajouté avec succès !')
 
@@ -91,8 +90,29 @@ export default class DecksController {
   /**
    * Publish a deck
    */
+  // async publish({ params, response, session }: HttpContext) {
+  //   const deck = await Deck.findOrFail(params.deck_id)
+
+  //   deck.published = true
+  //   await deck.save()
+
+  //   session.flash('success', 'Le deck a été publié avec succès !')
+
+  //   return response.redirect().toRoute('decks.show')
+  // }
+
   async publish({ params, response, session }: HttpContext) {
     const deck = await Deck.findOrFail(params.deck_id)
+
+    // Count cards in the deck
+    const cardsCount = await Card.query().where('deck_id', deck.id).count('* as total')
+    const totalCards = Number(cardsCount[0].$extras.total) // Convert to number
+    // const totalCards = await Card.query().where('deck_id', deck.id).getCount()
+
+    if (totalCards === 0) {
+      session.flash('error', 'Impossible de publier un deck sans cartes !')
+      return response.redirect().back()
+    }
 
     deck.published = true
     await deck.save()
