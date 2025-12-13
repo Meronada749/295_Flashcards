@@ -1,4 +1,7 @@
 import vine from '@vinejs/vine'
+import { validatorsInFrench } from './french_validator.js'
+
+vine.messagesProvider = validatorsInFrench
 
 const cardValidator = vine.compile(
   vine.object({

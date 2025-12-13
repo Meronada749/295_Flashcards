@@ -1,5 +1,0 @@
-{
-  "username.required": "Le nom d'utilisateur est obligatoire.",
-  "password.required": "Le mot de passe est obligatoire.",
-  "password.minLength": "Le mot de passe doit contenir au moins 4 caractères."
-}
