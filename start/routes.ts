@@ -31,7 +31,6 @@ router
   .delete('/deck/:deck_id/destroy', [DecksController, 'destroy'])
   .as('deck.destroy')
   .use(middleware.auth())
-  .use(middleware.ensureAdmin())
 
 // Route permettant d'afficher le formulaire permettant l'ajout d'un deck
 router.get('/deck/add', [DecksController, 'create']).as('deck.create').use(middleware.auth())
