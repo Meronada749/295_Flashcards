@@ -54,6 +54,12 @@ router
   .as('deck.publish')
   .use(middleware.auth())
 
+// Route permettant de unpublish un deck
+router
+  .post('/deck/:deck_id/unpublish', [DecksController, 'unpublish'])
+  .as('deck.unpublish')
+  .use(middleware.auth())
+
 /**
  * ROUTES pour les CARDS
  */

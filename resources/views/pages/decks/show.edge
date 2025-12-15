@@ -56,11 +56,27 @@
 
             <a href="{{ route('deck.play', { deck_id: deck.id }) }}" class="bouton">Jouer</a>
 
-            <form method="POST" style="display: inline" action="{{ route('deck.publish', { deck_id: deck.id }) }}">
-              {{ csrfField() }}
-              <button class="bouton" type="submit">Publier</button>
-            </form>
+            @if(deck.published)
 
+              <form
+                method="POST"
+                style="display: inline"
+                action="{{ route('deck.unpublish', { deck_id: deck.id }) }}"
+              >
+                {{ csrfField() }}
+              <button class="bouton" type="submit">Dépublier</button>
+              </form>
+
+            @else
+            
+              
+              <form method="POST" style="display: inline" action="{{ route('deck.publish', { deck_id: deck.id }) }}">
+                {{ csrfField() }}
+              <button class="bouton" type="submit">Publier</button>
+              </form>
+
+            @endif
+                
           </td>
         </tr>
       @endeach

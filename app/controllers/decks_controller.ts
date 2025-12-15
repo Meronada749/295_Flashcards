@@ -90,17 +90,6 @@ export default class DecksController {
   /**
    * Publish a deck
    */
-  // async publish({ params, response, session }: HttpContext) {
-  //   const deck = await Deck.findOrFail(params.deck_id)
-
-  //   deck.published = true
-  //   await deck.save()
-
-  //   session.flash('success', 'Le deck a été publié avec succès !')
-
-  //   return response.redirect().toRoute('decks.show')
-  // }
-
   async publish({ params, response, session }: HttpContext) {
     const deck = await Deck.findOrFail(params.deck_id)
 
@@ -118,6 +107,20 @@ export default class DecksController {
     await deck.save()
 
     session.flash('success', 'Le deck a été publié avec succès !')
+
+    return response.redirect().toRoute('decks.show')
+  }
+
+  /**
+   * Unpublish a deck
+   */
+  async unpublish({ params, response, session }: HttpContext) {
+    const deck = await Deck.findOrFail(params.deck_id)
+
+    deck.published = false
+    await deck.save()
+
+    session.flash('success', 'Le deck a été dépublié avec succès !')
 
     return response.redirect().toRoute('decks.show')
   }
