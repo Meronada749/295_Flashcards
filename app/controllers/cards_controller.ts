@@ -7,17 +7,24 @@ export default class CardsController {
   /**
    * Display a list of resource
    */
-  async index({ view }: HttpContext) {
-    const cards = await Card.all()
-    return view.render('pages/home.edge', { cards })
+  async index({ view, params }: HttpContext) {
+    // Fetches all cards for a deck (deck_id from URL params)
+    const cards = await Card.query().where('deck_id', params.deck_id)
+
+    // Fetches the deck itself.
+    const deck = await Deck.findOrFail(params.deck_id)
+
+    // Renders a view showing the deck and its cards.
+    return view.render('pages/cards/show.edge', { deck, cards })
   }
 
   /**
    * Display form to create a new record
    */
   async create({ view, params }: HttpContext) {
-    const { deck_id } = params
-    const deck = await Deck.findOrFail(deck_id)
+    // Fetch the deck
+    const deck = await Deck.findOrFail(params.deck_id)
+
     return view.render('pages/cards/create.edge', { deck })
   }
 
@@ -25,32 +32,35 @@ export default class CardsController {
    * Handle form submission for the create action
    */
   async store({ request, session, response, params }: HttpContext) {
-    const { deck_id } = params
     const { question, answer } = await request.validateUsing(cardValidator)
 
-    await Card.create({ question, answer, deckId: Number(deck_id) })
+    await Card.create({ question, answer, deckId: params.deck_id })
 
     session.flash('success', 'Le nouveau card a été ajouté avec succès !')
 
-    return response.redirect().toRoute('cards.show', { deck_id })
+    return response.redirect().toRoute('cards.show', { deck_id: params.deck_id })
   }
 
   /**
    * Show individual record
    */
   async show({ params, view }: HttpContext) {
-    const cards = await Card.query().where('deck_id', params.deck_id)
     const deck = await Deck.findOrFail(params.deck_id)
-    return view.render('pages/cards/show.edge', { deck, cards })
+
+    // Fetch the card within that deck
+    const card = await Card.query().where({ deck_id: deck.id, id: params.card_id }).firstOrFail()
+
+    return view.render('pages/cards/home.edge', { deck, card })
   }
 
   /**
    * Edit individual record
    */
   async edit({ params, view }: HttpContext) {
-    const { deck_id, card_id } = params
-    const deck = await Deck.findOrFail(deck_id)
-    const card = await Card.findOrFail(card_id)
+    const deck = await Deck.findOrFail(params.deck_id)
+
+    const card = await Card.findOrFail(params.card_id)
+
     return view.render('pages/cards/edit.edge', { deck, card })
   }
 
@@ -58,16 +68,15 @@ export default class CardsController {
    * Handle form submission for the edit action
    */
   async update({ params, request, session, response }: HttpContext) {
-    const { deck_id, card_id } = params
     const { question, answer } = await request.validateUsing(cardValidator)
 
-    const card = await Card.findOrFail(card_id)
+    const card = await Card.findOrFail(params.card_id)
 
     card.merge({ question, answer }).save()
 
     session.flash('success', 'La carte a été mise à jour avec succès !')
 
-    return response.redirect().toRoute('cards.show', { deck_id })
+    return response.redirect().toRoute('cards.show', { deck_id: params.deck_id })
   }
 
   /**
@@ -75,20 +84,11 @@ export default class CardsController {
    */
   async destroy({ params, session, response }: HttpContext) {
     const card = await Card.findOrFail(params.card_id)
+
     await card.delete()
+
     session.flash('success', 'Le card a été supprimé avec succès !')
+
     return response.redirect().toRoute('cards.show', { deck_id: params.deck_id })
-  }
-
-  /**
-   * show a single card
-   */
-  async showCard({ params, view }: HttpContext) {
-    const deck = await Deck.findOrFail(params.deck_id)
-
-    // Fetch the card within that deck
-    const card = await Card.query().where({ deck_id: deck.id, id: params.card_id }).firstOrFail()
-
-    return view.render('pages/cards/home.edge', { deck, card })
   }
 }

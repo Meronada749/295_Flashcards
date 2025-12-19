@@ -23,9 +23,6 @@ router.get('/', [DecksController, 'index']).as('home')
 // Route permettant de voir les decks d'un user
 router.get('/decks-by-user/show', [DecksController, 'show']).as('decks.show').use(middleware.auth())
 
-// Route permettant de voir les cards d'un deck
-router.get('/deck/:deck_id/show', [CardsController, 'show']).as('cards.show').use(middleware.auth())
-
 // Route permettant de supprimer les decks d'un user
 router
   .delete('/deck/:deck_id/destroy', [DecksController, 'destroy'])
@@ -64,9 +61,15 @@ router
  * ROUTES pour les CARDS
  */
 
+// Route permettant de voir les cards d'un deck
+router
+  .get('/decks/:deck_id/cards', [CardsController, 'index'])
+  .as('cards.show')
+  .use(middleware.auth())
+
 // Route permettant de voir une carte d'un deck
 router
-  .get('/deck/:deck_id/cards/:card_id/showCard', [CardsController, 'showCard'])
+  .get('/decks/:deck_id/cards/:card_id/show', [CardsController, 'show'])
   .as('card.show')
   .use(middleware.auth())
 
@@ -89,12 +92,12 @@ router
 
 // Route permettant de modifier une carte d'un deck
 router
-  .get('/decks/:deck_id/card/:card_id/edit', [CardsController, 'edit'])
+  .get('/decks/:deck_id/cards/:card_id/edit', [CardsController, 'edit'])
   .as('card.edit')
   .use(middleware.auth())
 // Route permettant la modification d'une carte
 router
-  .post('/decks/:deck_id/card/:card_id/update', [CardsController, 'update'])
+  .post('/decks/:deck_id/cards/:card_id/update', [CardsController, 'update'])
   .as('card.update')
   .use(middleware.auth())
 
