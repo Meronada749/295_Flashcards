@@ -13,15 +13,18 @@ import DecksController from '#controllers/decks_controller'
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 
-//router.on('/').render('pages/home')
-router.get('/', [DecksController, 'index']).as('home')
-
 /**
  * ROUTES pour les DECKS
  */
 
+//router.on('/').render('pages/home')
+router.get('/', [DecksController, 'index']).as('home')
+
 // Route permettant de voir les decks d'un user
-router.get('/decks-by-user/show', [DecksController, 'show']).as('decks.show').use(middleware.auth())
+router
+  .get('/decks-by-user/show', [DecksController, 'decksByUser'])
+  .as('decks.show')
+  .use(middleware.auth())
 
 // Route permettant de supprimer les decks d'un user
 router
@@ -53,7 +56,7 @@ router
 
 // Route permettant de unpublish un deck
 router
-  .post('/deck/:deck_id/unpublish', [DecksController, 'unpublish'])
+  .post('/deck/:deck_id/unpublish', [DecksController, 'unPublish'])
   .as('deck.unpublish')
   .use(middleware.auth())
 
@@ -64,7 +67,7 @@ router
 // Route permettant de voir les cards d'un deck
 router
   .get('/decks/:deck_id/cards', [CardsController, 'index'])
-  .as('cards.show')
+  .as('cards.home')
   .use(middleware.auth())
 
 // Route permettant de voir une carte d'un deck
@@ -81,12 +84,12 @@ router
 
 // Route permettant d'afficher le formulaire permettant l'ajout d'une carte
 router
-  .get('/decks/:deck_id/card/add', [CardsController, 'create'])
+  .get('/decks/:deck_id/cards/add', [CardsController, 'create'])
   .as('card.create')
   .use(middleware.auth())
 // Route permettant l'ajout d'une carte
 router
-  .post('/decks/:deck_id/card/add', [CardsController, 'store'])
+  .post('/decks/:deck_id/cards/add', [CardsController, 'store'])
   .as('card.store')
   .use(middleware.auth())
 
@@ -117,9 +120,7 @@ router
   .as('auth.handleLogout')
   .use(middleware.auth())
 
-router.get('/signup', [AuthController, 'showSignupForm']).as('auth.signup').use(middleware.guest())
-
-router
-  .post('/signup', [AuthController, 'handleSignup'])
-  .as('auth.handleSignup')
-  .use(middleware.guest())
+// Route permettant d'afficher le formulaire permettant l'ajout d'un utilisateur
+router.get('/signup', [AuthController, 'create']).as('user.create').use(middleware.guest())
+// Route permettant l'ajout d'un utilisateur
+router.post('/signup', [AuthController, 'store']).as('user.store').use(middleware.guest())

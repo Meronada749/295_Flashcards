@@ -2,7 +2,7 @@
   <h1>
     Inscription
   </h1>
-  <form action="{{ route('auth.handleSignup') }}" method="post">
+  <form action="{{ route('user.store') }}" method="post">
     @include('partials/createUser')
   </form>
 @endcomponent

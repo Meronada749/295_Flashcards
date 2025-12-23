@@ -50,7 +50,7 @@
               <button class="bouton" type="submit">Supprimer</button>
             </form>
 
-            <a href="{{ route('cards.show', {deck_id: deck.id}) }}" class="bouton">Voir la liste des FlashCards</a>
+            <a href="{{ route('cards.home', {deck_id: deck.id}) }}" class="bouton">Voir la liste des FlashCards</a>
 
             <a href="{{ route ('card.create', {deck_id: deck.id}) }}" class="bouton">Créer une nouvelle FlashCard</a>
 
